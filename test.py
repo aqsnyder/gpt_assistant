@@ -4,7 +4,7 @@ import pyttsx3
 import time
 
 # Set up OpenAI API Key
-openai.api_key = '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'
+openai.api_key = 'ssecret-key'
 
 # Initialize recognizer and TTS engine
 recognizer = sr.Recognizer()
