@@ -12,6 +12,7 @@ openai = "*"
 soundfile = "*"
 sounddevice = "*"
 numpy = "*"
+pyttsx3 = "*"
 
 [dev-packages]
 

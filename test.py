@@ -1,15 +1,14 @@
 import openai
 import speech_recognition as sr
-from gtts import gTTS
-import soundfile as sf
-import sounddevice as sd
+import pyttsx3
 import time
 
 # Set up OpenAI API Key
-openai.api_key = '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'
+openai.api_key = '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'
 
-# Initialize recognizer
+# Initialize recognizer and TTS engine
 recognizer = sr.Recognizer()
+engine = pyttsx3.init()
 
 def get_gpt_response(prompt):
     """Get response from GPT-3 for a given prompt."""
@@ -20,25 +19,24 @@ def get_gpt_response(prompt):
     )
     return response.choices[0].text.strip()
 
-def play_audio(filename):
-    """Play the given audio file."""
-    data, samplerate = sf.read(filename)
-    sd.play(data, samplerate)
-    sd.wait()  # Block until audio playback is done
+def play_audio(response):
+    """Play the given response using pyttsx3."""
+    engine.say(response)
+    engine.runAndWait()
 
 def process_voice_command():
     with sr.Microphone() as source:
         print("Listening...")
-        audio = recognizer.listen(source)
         try:
+            audio = recognizer.listen(source, timeout=10, phrase_time_limit=10)
             text = recognizer.recognize_google(audio)
-            print(f"Recognized: {text}")  # Print what was recognized
+            print(f"Recognized: {text}")  
             if text.lower().startswith("jarvis"):
-                command = text[7:]  # Assuming a space after Jarvis
+                command = text[7:] 
                 response = get_gpt_response(command)
-                tts = gTTS(text=response, lang='en')
-                tts.save("response.wav")
-                play_audio("response.wav")
+                play_audio(response)
+        except sr.WaitTimeoutError:
+            print("Timeout reached. Ready for the next command.")
         except sr.UnknownValueError:
             print("Sorry, I did not get that.")
         except sr.RequestError:
@@ -49,4 +47,4 @@ def process_voice_command():
 if __name__ == "__main__":
     while True:
         process_voice_command()
-        time.sleep(1)
+        time.sleep(0.5) 
